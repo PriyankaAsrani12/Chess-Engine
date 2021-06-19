@@ -4,8 +4,8 @@ from ChessEngine import ChessEngineFile
 WIDTH=HEIGHT = 512
 DIMENSION = 8
 SQ_SIZE = HEIGHT//DIMENSION
-MAX_FPS=15
-IMAGES={}
+MAX_FPS = 15
+IMAGES = {}
 
 def loadImage():
     pieces=["bp", "bR", "bN", "bB", "bQ", "bK", "wp", "wR", "wN", "wB", "wQ", "wK"]
@@ -20,10 +20,28 @@ def main():
     gs=ChessEngineFile.GameState()
     loadImage()
     running=True
+    sqSelected=()
+    playerClicks=[]
     while running:
         for e in p.event.get():
             if e.type==p.QUIT:
                 running=False
+            elif e.type==p.MOUSEBUTTONDOWN:
+                location=p.mouse.get_pos()
+                col=location[0]//SQ_SIZE
+                row=location[1]//SQ_SIZE
+                if sqSelected==(row,col):
+                    sqSelected=()
+                    playerClicks=[]
+                else:
+                    sqSelected=(row,col)
+                    playerClicks.append((sqSelected))
+                if len(playerClicks)==2:
+                    move=ChessEngineFile.Move(playerClicks[0],playerClicks[1],gs.board)
+                    print(move.getChessNotation())
+                    gs.makeMove(move)
+                    sqSelected=()
+                    playerClicks=[]
         drawGameState(screen,gs)
         clock.tick(MAX_FPS)
         p.display.flip()
